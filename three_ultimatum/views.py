@@ -8,20 +8,28 @@ from ._builtin import Page, WaitPage
 from .models import Constants
 
 
-class MyPage(Page):
+class Introduction(Page):
     pass
 
-class ResultsWaitPage(WaitPage):
 
-    def after_all_players_arrive(self):
-        pass
+class Offer(Page):
+    form_model = models.Group
+    form_fields = ['offered_coins']
+
+    def is_displayed(self):
+        return self.player.id_in_group == 1
+
+    timeout_seconds = 600
+
 
 class Results(Page):
-    pass
+    def vars_for_template(self):
+        return {"payoffs":
+                list([player.payoff for player in self.group.get_players()])}
 
 
 page_sequence = [
-    MyPage,
-    ResultsWaitPage,
+    Introduction,
+    Offer,
     Results
 ]

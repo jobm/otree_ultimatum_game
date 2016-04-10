@@ -2,7 +2,7 @@
 # <standard imports>
 from __future__ import division
 
-import random
+from random import randrange as r_range
 
 import otree.models
 from otree.db import models
@@ -25,16 +25,20 @@ class Constants(BaseConstants):
     num_rounds = 1
     endowment = c(10)
     if_offer_rejected = c(0)
-    offer_increment = c(2)
-    offer_choices = random.range(0, 11, 5)
+    offer_increment = c(5)
+    offered_choices = currency_range(0, endowment + 1, offer_increment)
 
 
 class Subsession(BaseSubsession):
-    pass
+    def before_session_starts(self):
+        dictator, recipient, punisher = self.get_players()
+        dictator.payoff = 10
+        recipient.payoff = 10
+        punisher.payoff = 10
 
 
 class Group(BaseGroup):
-    offerd_coins = models.CurrencyField(choices=Constants.offer_choices)
+    offered_coins = models.CurrencyField(choices=Constants.offered_choices)
 
     offer_accepted = models.BooleanField()
 
@@ -43,13 +47,14 @@ class Group(BaseGroup):
     response_10 = models.BooleanField(widget=widgets.RadioSelectHorizontal())
 
     def set_payoffs(self):
-        dictator, recipient, punisher = self.getplayers()
-
+        dictator = self.get_player_by_id(1)
+        recipient = self.get_player_by_id(2)
+        punisher = self.get_player_by_id(3)
         # if offer is accepted the punisher does not get involved/punish
         if self.offer_accepted:
             dictator.payoff = Constants.endowment - self.amount_offered
             recipient.payoff = self.amount_offered
-            punisher = 0
+            punisher.payoff = 0
 
         # if the offer is rejected the punisher get invoved and deducts payoff
         # from the dictator or player one

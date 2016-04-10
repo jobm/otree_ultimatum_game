@@ -93,11 +93,12 @@ mturk_hit_settings = {
     'frame_height': 500,
     'preview_template': 'global/MTurkPreview.html',
     'minutes_allotted_per_assignment': 60,
-    'expiration_hours': 7*24, # 7 days
+    'expiration_hours': 7 * 24,  # 7 days
     #'grant_qualification_id': 'YOUR_QUALIFICATION_ID_HERE',# to prevent retakes
     'qualification_requirements': [
         qualification.LocaleRequirement("EqualTo", "US"),
-        qualification.PercentAssignmentsApprovedRequirement("GreaterThanOrEqualTo", 50),
+        qualification.PercentAssignmentsApprovedRequirement(
+            "GreaterThanOrEqualTo", 50),
         qualification.NumberHitsApprovedRequirement("GreaterThanOrEqualTo", 5),
         #qualification.Requirement('YOUR_QUALIFICATION_ID_HERE', 'DoesNotExist')
     ]
@@ -118,12 +119,12 @@ SESSION_CONFIG_DEFAULTS = {
 
 
 SESSION_CONFIGS = [
-    # {
-    #     'name': '...',
-    #     'display_name': '...',
-    #     'num_demo_participants': ...,
-    #     'app_sequence': ['...'],
-    # }
+    {
+        'name': 'three_ultimatum',
+        'display_name': 'three player ultimatum',
+        'num_demo_participants': 3,
+        'app_sequence': ['three_ultimatum'],
+    }
 ]
 
 # don't put anything after this line.
