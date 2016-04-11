@@ -30,17 +30,15 @@ class Constants(BaseConstants):
 
 
 class Subsession(BaseSubsession):
-    def before_session_starts(self):
-        dictator, recipient, punisher = self.get_players()
-        dictator.payoff = 10
-        recipient.payoff = 10
-        punisher.payoff = 10
+    pass
 
 
 class Group(BaseGroup):
     offered_coins = models.CurrencyField(choices=Constants.offered_choices)
 
     offer_accepted = models.BooleanField()
+
+    punish_dictator = models.BooleanField()
 
     response_0 = models.BooleanField(widget=widgets.RadioSelectHorizontal())
     response_5 = models.BooleanField(widget=widgets.RadioSelectHorizontal())
@@ -52,13 +50,18 @@ class Group(BaseGroup):
         punisher = self.get_player_by_id(3)
         # if offer is accepted the punisher does not get involved/punish
         if self.offer_accepted:
-            dictator.payoff = Constants.endowment - self.amount_offered
-            recipient.payoff = self.amount_offered
-            punisher.payoff = 0
+            if self.amount_offered >= 5:
+                dictator.payoff = Constants.endowment - self.amount_offered
+                recipient.payoff = self.amount_offered
+                punisher.payoff = 0
+            else:
+                dictator.payoff = Constants.endowment / 2
+                recipient.payoff = dictator.payoff
+                punisher.payoff = dictator.payoff
 
         # if the offer is rejected the punisher get invoved and deducts payoff
         # from the dictator or player one
-        else:
+        elif self.punish_dictator:
             # dictators pay is cut in half by the punisher
             dictator.payoff = Constants.endowment / 2
             # recipient gets a quater off the dictators payoff

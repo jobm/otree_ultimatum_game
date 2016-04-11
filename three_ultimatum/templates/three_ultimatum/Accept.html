@@ -1,0 +1,12 @@
+{% extends "global/Base.html" %}
+{% load staticfiles otree_tags %}
+
+{% block title %}
+    Page title
+{% endblock %}
+
+{% block content %}
+  {% next_button %}
+<p>you have been offered {{ group.offered_coins }}.</p>
+{% formfield group.offer_accepted with label="Do you accept the offer?" %}
+{% endblock %}
